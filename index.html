@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IUIU</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:black;
+    font-family:'Comic Sans MS', cursive;
+}
+
+/* ===== CHỮ BAY ===== */
+.love-text{
+    position:absolute;
+    color:#ff69b4;
+    font-weight:bold;
+    text-shadow:
+        0 0 5px #ff69b4,
+        0 0 10px #ff1493,
+        0 0 20px #ff1493,
+        0 0 40px #ff69b4;
+    animation: floatUp linear infinite;
+    white-space:nowrap;
+    z-index:1;
+}
+
+@keyframes floatUp{
+    from{ transform: translateY(100vh); opacity:1; }
+    to{ transform: translateY(-120vh); opacity:0; }
+}
+
+/* ===== CÂU HỎI ===== */
+#questionBox{
+    position:fixed;
+    top:30%;
+    left:50%;
+    transform:translateX(-50%);
+    text-align:center;
+    z-index:10;
+}
+
+#questionBox h2{
+    color:hotpink;
+    text-shadow:0 0 20px hotpink;
+}
+
+.btn{
+    padding:10px 20px;
+    margin:10px;
+    border:none;
+    border-radius:25px;
+    font-size:16px;
+    cursor:pointer;
+    opacity:0;              /* Ẩn ban đầu */
+    transition:opacity 1s;  /* Fade mượt */
+}
+
+#yesBtn{ background:hotpink; color:white; }
+#noBtn{ background:white; color:black; position:absolute; }
+
+/* ===== HỘP THƯ TIM ĐẬP ===== */
+#letterBox{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:80%;
+    max-width:500px;
+    height:200px;
+    background:#111;
+    border-radius:25px;
+
+    border:3px solid hotpink;
+
+    box-shadow:
+        0 0 15px hotpink,
+        0 0 30px deeppink,
+        0 0 60px deeppink;
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+    color:hotpink;
+    font-size:20px;
+    text-align:center;
+    padding:20px;
+    z-index:10;
+    cursor:pointer;
+
+    animation: heartbeat 1s infinite;
+}
+/* ===== PHÁO HOA ===== */
+#fireworks{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:5;
+}
+
+
+/* TIM ĐẬP */
+@keyframes heartbeat{
+    0%   { transform:translate(-50%,-50%) scale(1); }
+    25%  { transform:translate(-50%,-50%) scale(1.05); }
+    40%  { transform:translate(-50%,-50%) scale(1); }
+    60%  { transform:translate(-50%,-50%) scale(1.08); }
+    100% { transform:translate(-50%,-50%) scale(1); }
+}
+
+/* NEON GLOW 3D */
+@keyframes neonGlow{
+    from{
+        box-shadow:
+            0 0 10px hotpink,
+            0 0 20px deeppink,
+            0 0 40px deeppink,
+            0 0 80px hotpink;
+    }
+    to{
+        box-shadow:
+            0 0 20px hotpink,
+            0 0 40px deeppink,
+            0 0 80px deeppink,
+            0 0 120px hotpink;
+    }
+
+}
+#letterBox{
+  white-space: pre-line;
+}
+
+</style>
+</head>
+<body>
+
+<div id="questionBox">
+    <h2>
+    <span id="line1"> </span><br>
+    <span id="line2"></span>
+    
+</h2>
+   
+       
+       
+    <button id="yesBtn" class="btn">Có ❤️</button>
+    <button id="noBtn" class="btn">Không ❌</button>
+</div>
+
+<div id="letterBox">💌 Bấm dô đây nè</div>
+<canvas id="fireworks"></canvas>
+
+<script>
+const line1 = document.getElementById("line1");
+const line2 = document.getElementById("line2");
+
+function typeEffect(element, text, speed, callback){
+    let i = 0;
+    element.innerHTML = "";
+    function typing(){
+        if(i < text.length){
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typing, speed);
+        } else if(callback){
+            callback();
+        }
+    }
+    typing();
+}
+
+function showSequence(){
+
+    // 1️⃣ Dòng đầu
+    typeEffect(line1, "Biết đường dô đây cũng khôn đó k ấy lắm", 40, () => {
+
+        setTimeout(() => {
+            line1.classList.add("fade-out");
+
+            setTimeout(() => {
+                line1.innerHTML = "";
+                line1.classList.remove("fade-out");
+
+                // 2️⃣ Dòng giữa "Vậy"
+                typeEffect(line1, "Vậy", 60, () => {
+
+                    setTimeout(() => {
+                        line1.classList.add("fade-out");
+
+                        setTimeout(() => {
+                            line1.innerHTML = "";
+                            line1.classList.remove("fade-out");
+
+                            // 3️⃣ Dòng cuối
+                            typeEffect(line1, "Em có yêu anh không? 💖", 40, () => {
+    document.getElementById("yesBtn").style.opacity = 1;
+    document.getElementById("noBtn").style.opacity = 1;
+});
+
+                        }, 1000);
+
+                    }, 1000);
+
+                });
+
+            }, 1000);
+
+        }, 1500);
+
+    });
+}
+
+showSequence();
+/* ===== CHỮ BAY ===== */
+const messages=["happy birthday🎉","iu cục dàng 💕","moa moaa 😘"];
+let textInterval=null;
+
+function createText(){
+    const text=document.createElement("div");
+    text.className="love-text";
+    text.innerText=messages[Math.floor(Math.random()*messages.length)];
+    text.style.left=Math.random()*100+"vw";
+    text.style.fontSize=(18+Math.random()*15)+"px";
+    text.style.animationDuration=(15+Math.random()*10)+"s";
+    document.body.appendChild(text);
+    setTimeout(()=>{text.remove();},25000);
+}
+
+/* ===== NÚT KHÔNG CHẠY ===== */
+const noBtn=document.getElementById("noBtn");
+noBtn.addEventListener("mouseover",function(){
+    noBtn.style.top=Math.random()*80+"vh";
+    noBtn.style.left=Math.random()*80+"vw";
+});
+
+/* ===== BẤM CÓ ===== */
+document.getElementById("yesBtn").onclick=function(){
+    document.getElementById("questionBox").style.display="none";
+    document.getElementById("letterBox").style.display="flex";
+};
+
+/* ===== NỘI DUNG THƯ ===== */
+const letterContent=`
+Toy cũng iu cậu
+Cucdang sinhnhat duide nhoa.
+Dù có như nào thì tớ cũng luôn ở đây với cậu có gì cứ nhắn cho tớ.
+Còn lỡ tôi k ở đây nữa thì cũng dui lên có cái chóa gì mà buồn😏.
+ckúc bé Tư Hẻo luông chinh đọep tuỵt dời nka.
+`;
+
+const letterBox=document.getElementById("letterBox");
+let opened=false;
+
+letterBox.onclick=function(){
+    if(opened) return;
+    opened=true;
+// Bắn pháo hoa 5 giây
+let fireInterval=setInterval(createFirework,200);
+setTimeout(()=>{clearInterval(fireInterval);},5000);
+
+    // Dừng tim đập + neon
+    letterBox.style.animation="none";
+letterBox.style.transform="translate(-50%,-50%) scale(1)";
+
+    letterBox.innerHTML="";
+    textInterval=setInterval(createText,800);
+
+    typeWriter(letterContent,letterBox,40);
+};
+
+function typeWriter(text,element,speed){
+    let i=0;
+    function typing(){
+        if(i<text.length){
+            element.innerHTML+=text.charAt(i);
+            i++;
+            setTimeout(typing,speed);
+        }
+    }
+    typing();
+}
+/* ===== PHÁO HOA ===== */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+class Particle{
+    constructor(x,y,color){
+        this.x=x;
+        this.y=y;
+        this.color=color;
+        this.radius=2+Math.random()*3;
+        this.speedX=(Math.random()-0.5)*6;
+        this.speedY=(Math.random()-0.5)*6;
+        this.alpha=1;
+    }
+
+    update(){
+        this.x+=this.speedX;
+        this.y+=this.speedY;
+        this.alpha-=0.02;
+    }
+
+    draw(){
+        ctx.globalAlpha=this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
+        ctx.fillStyle=this.color;
+        ctx.fill();
+    }
+}
+
+function createFirework(){
+    const x=Math.random()*canvas.width;
+    const y=Math.random()*canvas.height/2;
+    const colors=["#ff69b4","#ff1493","#ffffff","#ffd700","#00ffff"];
+
+    for(let i=0;i<120;i++){
+        particles.push(new Particle(x,y,colors[Math.floor(Math.random()*colors.length)]));
+    }
+}
+
+function animateFireworks(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach((p,index)=>{
+        p.update();
+        p.draw();
+        if(p.alpha<=0){
+            particles.splice(index,1);
+        }
+    });
+    requestAnimationFrame(animateFireworks);
+}
+
+animateFireworks();
+
+</script>
+
+</body>
+</html>
